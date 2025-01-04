@@ -18,8 +18,8 @@ const FileUpload = ({ onFileSelect }: FileUploadProps) => {
       setUploadStatus('error');
       return;
     }
-    if (file.size > 10 * 1024 * 1024) { // 10MB limit
-      setErrorMessage('File size must be less than 10MB');
+    if (file.size > 50 * 1024 * 1024) { // 50MB limit
+      setErrorMessage('File size must be less than 50MB');
       setUploadStatus('error');
       return;
     }
@@ -69,7 +69,7 @@ const FileUpload = ({ onFileSelect }: FileUploadProps) => {
             </span>
           </div>
           <p className="text-sm text-gray-500">
-            Maximum file size: 10MB
+            Maximum file size: 50MB
           </p>
         </div>
       </div>
