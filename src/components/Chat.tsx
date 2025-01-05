@@ -3,6 +3,8 @@ import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 interface Message {
   content: string;
@@ -13,6 +15,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,15 +26,29 @@ const Chat = () => {
     setInput('');
     setIsLoading(true);
 
-    // Placeholder for backend integration
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke('chat-with-pdf', {
+        body: { message: userMessage.content }
+      });
+
+      if (error) throw error;
+
       const assistantMessage = {
         role: 'assistant',
-        content: "I'm a placeholder response. Once connected to the backend, I'll be able to answer questions about your PDF!"
+        content: data.response
       } as Message;
+
       setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Error calling chat function:', error);
+      toast({
+        title: "Error",
+        description: "Failed to get response from the chat service.",
+        variant: "destructive"
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
