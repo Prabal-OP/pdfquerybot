@@ -10,7 +10,7 @@ interface Message {
   role: 'user' | 'assistant';
 }
 
-const BACKEND_URL = 'http://localhost:3000'; // Replace with your actual backend port
+const BACKEND_URL = 'http://127.0.0.1:8000'; // Updated to use the Uvicorn server port
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
