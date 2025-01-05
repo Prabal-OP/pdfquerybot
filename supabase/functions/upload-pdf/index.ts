@@ -23,18 +23,40 @@ serve(async (req) => {
       )
     }
 
-    // Create Supabase client
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
+
+    // Get existing file if any
+    const { data: existingFiles } = await supabase
+      .from('pdf_files')
+      .select('file_path')
+      .limit(1)
+
+    // Delete existing file if it exists
+    if (existingFiles && existingFiles.length > 0) {
+      const { error: deleteError } = await supabase.storage
+        .from('pdf-bucket')
+        .remove([existingFiles[0].file_path])
+
+      if (deleteError) {
+        console.error('Error deleting existing file:', deleteError)
+      }
+
+      // Delete existing record
+      await supabase
+        .from('pdf_files')
+        .delete()
+        .match({ file_path: existingFiles[0].file_path })
+    }
 
     // Sanitize filename and generate unique path
     const sanitizedFileName = file.name.replace(/[^\x00-\x7F]/g, '')
     const fileExt = sanitizedFileName.split('.').pop()
     const filePath = `${crypto.randomUUID()}.${fileExt}`
 
-    // Upload file to storage
+    // Upload new file
     const { data, error: uploadError } = await supabase.storage
       .from('pdf-bucket')
       .upload(filePath, file, {
@@ -50,7 +72,7 @@ serve(async (req) => {
       )
     }
 
-    // Save file metadata to database
+    // Save new file metadata
     const { error: dbError } = await supabase
       .from('pdf_files')
       .insert({

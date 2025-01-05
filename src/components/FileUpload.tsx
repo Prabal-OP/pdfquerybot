@@ -32,7 +32,7 @@ const FileUpload = ({ onFileSelect }: FileUploadProps) => {
       setUploadStatus('success');
       toast({
         title: "Success",
-        description: "PDF uploaded successfully!",
+        description: "PDF uploaded and replaced successfully!",
       });
       onFileSelect(file);
     } catch (error) {
@@ -110,7 +110,7 @@ const FileUpload = ({ onFileSelect }: FileUploadProps) => {
             <FileText className="h-6 w-6 text-blue-500" />
             <span className="text-lg font-medium">
               {uploadStatus === 'success' 
-                ? 'PDF uploaded successfully!' 
+                ? 'PDF uploaded and replaced successfully!' 
                 : uploadStatus === 'error'
                 ? errorMessage
                 : uploadStatus === 'uploading'
