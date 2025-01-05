@@ -3,13 +3,14 @@ import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
 interface Message {
   content: string;
   role: 'user' | 'assistant';
 }
+
+const BACKEND_URL = 'http://localhost:3000'; // Replace with your actual backend port
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -27,12 +28,19 @@ const Chat = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('chat-with-pdf', {
-        body: { message: userMessage.content }
+      const response = await fetch(`${BACKEND_URL}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage.content }),
       });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to get response from server');
+      }
 
+      const data = await response.json();
       const assistantMessage = {
         role: 'assistant',
         content: data.response
@@ -40,7 +48,7 @@ const Chat = () => {
 
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Error calling chat function:', error);
+      console.error('Error calling chat service:', error);
       toast({
         title: "Error",
         description: "Failed to get response from the chat service.",
