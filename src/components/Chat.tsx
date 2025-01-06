@@ -32,12 +32,15 @@ const Chat = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Origin': window.location.origin,
         },
-        body: JSON.stringify({ message: userMessage.content }),
+        body: JSON.stringify({ question: userMessage.content }), // Changed from 'message' to 'question'
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response from server');
+        const errorData = await response.json();
+        throw new Error(errorData.detail?.[0]?.msg || 'Failed to get response from server');
       }
 
       const data = await response.json();
@@ -51,7 +54,7 @@ const Chat = () => {
       console.error('Error calling chat service:', error);
       toast({
         title: "Error",
-        description: "Failed to get response from the chat service.",
+        description: error.message || "Failed to get response from the chat service.",
         variant: "destructive"
       });
     } finally {
