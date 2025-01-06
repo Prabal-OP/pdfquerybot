@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import FileUpload from '@/components/FileUpload';
 import Chat from '@/components/Chat';
 import PDFPreview from '@/components/PDFPreview';
@@ -7,11 +7,27 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/componen
 const Index = () => {
   const [hasFile, setHasFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const pdfIframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const handleFileSelect = (file: File) => {
     console.log('Selected file:', file.name);
     setSelectedFile(file);
     setHasFile(true);
+  };
+
+  const handlePDFLoad = (iframe: HTMLIFrameElement) => {
+    pdfIframeRef.current = iframe;
+  };
+
+  const handlePageChange = (page: number) => {
+    if (pdfIframeRef.current) {
+      // Use the PDF viewer's API to navigate to the specified page
+      // This example assumes the PDF viewer supports a postMessage interface
+      pdfIframeRef.current.contentWindow?.postMessage({
+        type: 'navigate',
+        page: page - 1 // PDF viewers typically use 0-based page numbers
+      }, '*');
+    }
   };
 
   return (
@@ -34,11 +50,11 @@ const Index = () => {
         <div className="h-screen">
           <ResizablePanelGroup direction="horizontal">
             <ResizablePanel defaultSize={50} minSize={30}>
-              {selectedFile && <PDFPreview file={selectedFile} />}
+              {selectedFile && <PDFPreview file={selectedFile} onLoad={handlePDFLoad} />}
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50} minSize={30}>
-              <Chat />
+              <Chat onPageChange={handlePageChange} />
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>

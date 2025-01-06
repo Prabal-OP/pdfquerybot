@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
@@ -6,13 +6,15 @@ import { Database } from '@/integrations/supabase/types';
 
 interface PDFPreviewProps {
   file: File;
+  onLoad?: (iframe: HTMLIFrameElement) => void;
 }
 
 type PDFFile = Database['public']['Tables']['pdf_files']['Row'];
 
-const PDFPreview = ({ file }: PDFPreviewProps) => {
+const PDFPreview = ({ file, onLoad }: PDFPreviewProps) => {
   const url = URL.createObjectURL(file);
   const { toast } = useToast();
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     const channel = supabase
@@ -39,15 +41,20 @@ const PDFPreview = ({ file }: PDFPreviewProps) => {
       )
       .subscribe();
 
+    if (iframeRef.current && onLoad) {
+      onLoad(iframeRef.current);
+    }
+
     return () => {
       URL.revokeObjectURL(url);
       supabase.removeChannel(channel);
     };
-  }, [url, toast]);
+  }, [url, toast, onLoad]);
 
   return (
     <div className="w-full h-full">
       <iframe
+        ref={iframeRef}
         src={url}
         className="w-full h-full border-0"
         title="PDF Preview"

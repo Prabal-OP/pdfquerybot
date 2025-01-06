@@ -5,14 +5,24 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 
+interface Context {
+  page_number: number | string;
+  page_content: string;
+}
+
 interface Message {
   content: string;
   role: 'user' | 'assistant';
+  context?: Context[];
 }
 
 const BACKEND_URL = 'http://127.0.0.1:8000';
 
-const Chat = () => {
+interface ChatProps {
+  onPageChange?: (page: number) => void;
+}
+
+const Chat = ({ onPageChange }: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -44,15 +54,24 @@ const Chat = () => {
       }
 
       const data = await response.json();
-      console.log('Response from server:', data); // Debug log to see the response structure
+      console.log('Response from server:', data);
 
       // Create assistant message from the response
       const assistantMessage = {
         role: 'assistant',
-        content: data.answer || data.response || 'No response content available'
+        content: data.answer || 'No response content available',
+        context: data.context
       } as Message;
 
       setMessages(prev => [...prev, assistantMessage]);
+
+      // If there's context with page numbers, scroll to the first referenced page
+      if (assistantMessage.context && assistantMessage.context.length > 0) {
+        const firstPage = assistantMessage.context[0].page_number;
+        if (typeof firstPage === 'number' && onPageChange) {
+          onPageChange(firstPage);
+        }
+      }
     } catch (error) {
       console.error('Error calling chat service:', error);
       toast({
@@ -63,6 +82,28 @@ const Chat = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const renderMessage = (message: Message) => {
+    return (
+      <div className={cn(
+        "max-w-[80%] rounded-lg px-4 py-2",
+        message.role === 'assistant' 
+          ? "bg-gray-100 text-gray-900" 
+          : "bg-blue-500 text-white"
+      )}>
+        <div>{message.content}</div>
+        {message.context && (
+          <div className="mt-2 text-sm text-gray-500">
+            {message.context.map((ctx, idx) => (
+              <div key={idx} className="mt-1">
+                <span className="font-semibold">Page {ctx.page_number}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -77,16 +118,7 @@ const Chat = () => {
                 message.role === 'assistant' ? "justify-start" : "justify-end"
               )}
             >
-              <div
-                className={cn(
-                  "max-w-[80%] rounded-lg px-4 py-2",
-                  message.role === 'assistant' 
-                    ? "bg-gray-100 text-gray-900" 
-                    : "bg-blue-500 text-white"
-                )}
-              >
-                {message.content}
-              </div>
+              {renderMessage(message)}
             </div>
           ))}
           {isLoading && (
