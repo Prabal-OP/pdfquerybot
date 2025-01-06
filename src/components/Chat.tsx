@@ -10,7 +10,7 @@ interface Message {
   role: 'user' | 'assistant';
 }
 
-const BACKEND_URL = 'http://127.0.0.1:8000'; // Updated to use the Uvicorn server port
+const BACKEND_URL = 'http://127.0.0.1:8000';
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -35,7 +35,7 @@ const Chat = () => {
           'Accept': 'application/json',
           'Origin': window.location.origin,
         },
-        body: JSON.stringify({ question: userMessage.content }), // Changed from 'message' to 'question'
+        body: JSON.stringify({ question: userMessage.content }),
       });
 
       if (!response.ok) {
@@ -44,9 +44,12 @@ const Chat = () => {
       }
 
       const data = await response.json();
+      console.log('Response from server:', data); // Debug log to see the response structure
+
+      // Create assistant message from the response
       const assistantMessage = {
         role: 'assistant',
-        content: data.response
+        content: data.answer || data.response || 'No response content available'
       } as Message;
 
       setMessages(prev => [...prev, assistantMessage]);
