@@ -26,9 +26,10 @@ const PDFPreview = ({ file }: PDFPreviewProps) => {
         },
         (payload: RealtimePostgresChangesPayload<PDFFile>) => {
           console.log('Change received!', payload);
+          const filename = payload.new?.filename || payload.old?.filename || 'unknown file';
           toast({
             title: "PDF Update",
-            description: `PDF ${payload.eventType}: ${payload.new?.filename || payload.old?.filename}`,
+            description: `PDF ${payload.eventType}: ${filename}`,
           });
         }
       )
