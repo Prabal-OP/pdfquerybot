@@ -1,10 +1,14 @@
 import React, { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
+import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { Database } from '@/integrations/supabase/types';
 
 interface PDFPreviewProps {
   file: File;
 }
+
+type PDFFile = Database['public']['Tables']['pdf_files']['Row'];
 
 const PDFPreview = ({ file }: PDFPreviewProps) => {
   const url = URL.createObjectURL(file);
@@ -20,7 +24,7 @@ const PDFPreview = ({ file }: PDFPreviewProps) => {
           schema: 'public',
           table: 'pdf_files'
         },
-        (payload) => {
+        (payload: RealtimePostgresChangesPayload<PDFFile>) => {
           console.log('Change received!', payload);
           toast({
             title: "PDF Update",
