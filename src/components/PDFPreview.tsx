@@ -26,7 +26,11 @@ const PDFPreview = ({ file }: PDFPreviewProps) => {
         },
         (payload: RealtimePostgresChangesPayload<PDFFile>) => {
           console.log('Change received!', payload);
-          const filename = payload.new?.filename || payload.old?.filename || 'unknown file';
+          // Handle cases where new or old record might be empty objects
+          const newRecord = payload.new as PDFFile | undefined;
+          const oldRecord = payload.old as PDFFile | undefined;
+          const filename = newRecord?.filename || oldRecord?.filename || 'unknown file';
+          
           toast({
             title: "PDF Update",
             description: `PDF ${payload.eventType}: ${filename}`,
