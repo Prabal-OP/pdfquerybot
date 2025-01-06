@@ -56,7 +56,6 @@ const Chat = ({ onPageChange }: ChatProps) => {
       const data = await response.json();
       console.log('Response from server:', data);
 
-      // Create assistant message from the response
       const assistantMessage = {
         role: 'assistant',
         content: data.answer || 'No response content available',
@@ -93,15 +92,6 @@ const Chat = ({ onPageChange }: ChatProps) => {
           : "bg-blue-500 text-white"
       )}>
         <div>{message.content}</div>
-        {message.context && (
-          <div className="mt-2 text-sm text-gray-500">
-            {message.context.map((ctx, idx) => (
-              <div key={idx} className="mt-1">
-                <span className="font-semibold">Page {ctx.page_number}</span>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     );
   };
