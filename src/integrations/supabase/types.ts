@@ -9,6 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      options: {
+        Row: {
+          created_at: string
+          id: string
+          is_correct: boolean
+          option_text: string
+          question_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          option_text: string
+          question_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          option_text?: string
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_question"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pdf_files: {
         Row: {
           content_type: string | null
@@ -36,6 +75,69 @@ export type Database = {
         }
         Relationships: []
       }
+      questions: {
+        Row: {
+          created_at: string
+          id: string
+          question_text: string
+          short_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          question_text: string
+          short_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          question_text?: string
+          short_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_short"
+            columns: ["short_id"]
+            isOneToOne: false
+            referencedRelation: "shorts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_short_id_fkey"
+            columns: ["short_id"]
+            isOneToOne: false
+            referencedRelation: "shorts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shorts: {
+        Row: {
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["short_status"] | null
+          topic_name: string
+          topic_summary: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["short_status"] | null
+          topic_name: string
+          topic_summary: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["short_status"] | null
+          topic_name?: string
+          topic_summary?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -44,7 +146,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      short_status: "draft" | "in_progress" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
