@@ -1,12 +1,16 @@
 import { useState, useRef } from 'react';
+import { Minimize2, Maximize2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import FileUpload from '@/components/FileUpload';
 import Chat from '@/components/Chat';
 import PDFPreview from '@/components/PDFPreview';
+import Shorts from '@/components/Shorts';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 
 const Index = () => {
   const [hasFile, setHasFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isPdfCollapsed, setIsPdfCollapsed] = useState(true);
   const pdfIframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const handleFileSelect = (file: File) => {
@@ -21,13 +25,15 @@ const Index = () => {
 
   const handlePageChange = (page: number) => {
     if (pdfIframeRef.current) {
-      // Use the PDF viewer's API to navigate to the specified page
-      // This example assumes the PDF viewer supports a postMessage interface
       pdfIframeRef.current.contentWindow?.postMessage({
         type: 'navigate',
-        page: page - 1 // PDF viewers typically use 0-based page numbers
+        page: page - 1
       }, '*');
     }
+  };
+
+  const togglePdfCollapse = () => {
+    setIsPdfCollapsed(!isPdfCollapsed);
   };
 
   return (
@@ -49,12 +55,28 @@ const Index = () => {
       ) : (
         <div className="h-screen">
           <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={50} minSize={30}>
+            <ResizablePanel 
+              defaultSize={isPdfCollapsed ? 10 : 50} 
+              minSize={10}
+              maxSize={50}
+              className="relative"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-2 right-2 z-10"
+                onClick={togglePdfCollapse}
+              >
+                {isPdfCollapsed ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+              </Button>
               {selectedFile && <PDFPreview file={selectedFile} onLoad={handlePDFLoad} />}
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={50} minSize={30}>
-              <Chat onPageChange={handlePageChange} />
+            <ResizablePanel defaultSize={50} minSize={40}>
+              <div className="h-full flex flex-col p-4">
+                <Shorts />
+                <Chat onPageChange={handlePageChange} />
+              </div>
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>
