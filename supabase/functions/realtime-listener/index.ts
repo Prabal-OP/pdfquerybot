@@ -49,9 +49,21 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Get the authorization header
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      throw new Error('No authorization header')
+    }
+
+    // Verify the JWT token
+    const { data: { user }, error } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''))
+    if (error || !user) {
+      throw new Error('Invalid token')
+    }
+
     // Your function logic here
     return new Response(
-      JSON.stringify({ message: 'Realtime listener initialized' }),
+      JSON.stringify({ message: 'Realtime listener initialized', user: user.id }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
@@ -63,7 +75,7 @@ Deno.serve(async (req) => {
       JSON.stringify({ error: error.message }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
+        status: 401,
       }
     )
   }
