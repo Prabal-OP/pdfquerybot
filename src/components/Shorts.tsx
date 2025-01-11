@@ -43,7 +43,7 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
           questions!fk_short (
             id,
             question_text,
-            options (
+            options!fk_question (
               id,
               option_text,
               is_correct
