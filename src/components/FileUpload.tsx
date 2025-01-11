@@ -7,9 +7,10 @@ import { useToast } from "@/components/ui/use-toast";
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;
+  onShortsInitialized?: () => void;
 }
 
-const FileUpload = ({ onFileSelect }: FileUploadProps) => {
+const FileUpload = ({ onFileSelect, onShortsInitialized }: FileUploadProps) => {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const { toast } = useToast();
@@ -45,6 +46,9 @@ const FileUpload = ({ onFileSelect }: FileUploadProps) => {
         description: "PDF uploaded and shorts generated successfully!",
       });
       onFileSelect(file);
+      if (onShortsInitialized) {
+        onShortsInitialized();
+      }
     } catch (error) {
       console.error('Upload error:', error);
       setErrorMessage('Failed to upload file. Please try again.');

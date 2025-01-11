@@ -12,11 +12,19 @@ const Index = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showPdf, setShowPdf] = useState(false);
   const pdfIframeRef = useRef<HTMLIFrameElement | null>(null);
+  const shortsRef = useRef<{ fetchShorts?: () => void }>({});
 
   const handleFileSelect = (file: File) => {
     console.log('Selected file:', file.name);
     setSelectedFile(file);
     setHasFile(true);
+  };
+
+  const handleShortsInitialized = () => {
+    // Trigger shorts refresh when initialization is complete
+    if (shortsRef.current.fetchShorts) {
+      shortsRef.current.fetchShorts();
+    }
   };
 
   const handlePDFLoad = (iframe: HTMLIFrameElement) => {
@@ -49,7 +57,10 @@ const Index = () => {
                 Upload your PDF and start asking questions about its content
               </p>
             </div>
-            <FileUpload onFileSelect={handleFileSelect} />
+            <FileUpload 
+              onFileSelect={handleFileSelect} 
+              onShortsInitialized={handleShortsInitialized}
+            />
           </div>
         </div>
       ) : (
@@ -75,7 +86,7 @@ const Index = () => {
             )}
             <ResizablePanel defaultSize={showPdf ? 60 : 100}>
               <div className="h-full flex flex-col p-4">
-                <Shorts />
+                <Shorts ref={shortsRef} />
                 <Chat onPageChange={handlePageChange} />
               </div>
             </ResizablePanel>
