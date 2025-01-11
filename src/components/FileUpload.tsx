@@ -21,18 +21,31 @@ const FileUpload = ({ onFileSelect }: FileUploadProps) => {
     formData.append('file', file);
 
     try {
-      const { data, error } = await supabase.functions.invoke('upload-pdf', {
+      // Upload the PDF
+      const { data: uploadData, error: uploadError } = await supabase.functions.invoke('upload-pdf', {
         body: formData,
       });
 
-      if (error) {
-        throw error;
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Initialize shorts from the uploaded PDF
+      const { error: initError } = await supabase.functions.invoke('initialize-shorts');
+      
+      if (initError) {
+        console.error('Error initializing shorts:', initError);
+        toast({
+          variant: "destructive",
+          title: "Warning",
+          description: "PDF uploaded but failed to generate shorts. Please try again.",
+        });
       }
 
       setUploadStatus('success');
       toast({
         title: "Success",
-        description: "PDF uploaded and replaced successfully!",
+        description: "PDF uploaded and shorts generated successfully!",
       });
       onFileSelect(file);
     } catch (error) {
@@ -110,7 +123,7 @@ const FileUpload = ({ onFileSelect }: FileUploadProps) => {
             <FileText className="h-6 w-6 text-blue-500" />
             <span className="text-lg font-medium">
               {uploadStatus === 'success' 
-                ? 'PDF uploaded and replaced successfully!' 
+                ? 'PDF uploaded and shorts generated successfully!' 
                 : uploadStatus === 'error'
                 ? errorMessage
                 : uploadStatus === 'uploading'
