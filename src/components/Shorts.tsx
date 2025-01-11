@@ -3,6 +3,7 @@ import { Check, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
 
@@ -98,21 +99,24 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
                   <p className="text-sm text-muted-foreground mb-4">{short.topic_summary}</p>
-                  <div className="space-y-2 flex-1">
-                    {short.questions?.map((question, index) => (
-                      <div key={question.id} className="space-y-1">
-                        <p className="text-sm font-medium">
-                          {index + 1}. {question.question_text}
-                        </p>
-                        {question.options?.map((option) => (
-                          <p key={option.id} className="text-sm pl-4 text-muted-foreground">
-                            • {option.option_text}
-                            {option.is_correct && <span className="text-green-500 ml-1">(✓)</span>}
+                  <ScrollArea className="flex-1 w-full whitespace-nowrap">
+                    <div className="flex space-x-4 pb-2">
+                      {short.questions?.map((question, index) => (
+                        <div key={question.id} className="space-y-1 min-w-[300px]">
+                          <p className="text-sm font-medium">
+                            {index + 1}. {question.question_text}
                           </p>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
+                          {question.options?.map((option) => (
+                            <p key={option.id} className="text-sm pl-4 text-muted-foreground">
+                              • {option.option_text}
+                              {option.is_correct && <span className="text-green-500 ml-1">(✓)</span>}
+                            </p>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
                   <Button className="w-full mt-4">
                     <Check className="mr-2 h-4 w-4" />
                     Mark as Complete
