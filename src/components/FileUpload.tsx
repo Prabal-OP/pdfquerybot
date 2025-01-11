@@ -21,7 +21,7 @@ const FileUpload = ({ onFileSelect }: FileUploadProps) => {
     formData.append('file', file);
 
     try {
-      // Upload the PDF
+      // Upload the PDF to Supabase
       const { data: uploadData, error: uploadError } = await supabase.functions.invoke('upload-pdf', {
         body: formData,
       });
@@ -30,16 +30,13 @@ const FileUpload = ({ onFileSelect }: FileUploadProps) => {
         throw uploadError;
       }
 
-      // Initialize shorts from the uploaded PDF
-      const { error: initError } = await supabase.functions.invoke('initialize-shorts');
-      
-      if (initError) {
-        console.error('Error initializing shorts:', initError);
-        toast({
-          variant: "destructive",
-          title: "Warning",
-          description: "PDF uploaded but failed to generate shorts. Please try again.",
-        });
+      // Initialize shorts using FastAPI endpoint
+      const response = await fetch('http://127.0.0.1:8000/initialize', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to initialize shorts');
       }
 
       setUploadStatus('success');
