@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Check, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,7 +21,11 @@ interface Short {
   }[];
 }
 
-const Shorts = () => {
+export interface ShortsRef {
+  fetchShorts: () => Promise<void>;
+}
+
+const Shorts = forwardRef<ShortsRef>((_, ref) => {
   const [shorts, setShorts] = useState<Short[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -30,7 +34,6 @@ const Shorts = () => {
     try {
       setLoading(true);
       
-      // Fetch shorts with their questions and options
       const { data: shortsData, error: shortsError } = await supabase
         .from('shorts')
         .select(`
@@ -63,6 +66,10 @@ const Shorts = () => {
       setLoading(false);
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    fetchShorts
+  }));
 
   useEffect(() => {
     fetchShorts();
@@ -120,6 +127,8 @@ const Shorts = () => {
       </Carousel>
     </div>
   );
-};
+});
+
+Shorts.displayName = 'Shorts';
 
 export default Shorts;

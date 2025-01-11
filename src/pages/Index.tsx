@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import FileUpload from '@/components/FileUpload';
 import Chat from '@/components/Chat';
 import PDFPreview from '@/components/PDFPreview';
-import Shorts from '@/components/Shorts';
+import Shorts, { ShortsRef } from '@/components/Shorts';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 
 const Index = () => {
@@ -12,7 +12,7 @@ const Index = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showPdf, setShowPdf] = useState(false);
   const pdfIframeRef = useRef<HTMLIFrameElement | null>(null);
-  const shortsRef = useRef<{ fetchShorts?: () => void }>({});
+  const shortsRef = useRef<ShortsRef>(null);
 
   const handleFileSelect = (file: File) => {
     console.log('Selected file:', file.name);
@@ -22,7 +22,7 @@ const Index = () => {
 
   const handleShortsInitialized = () => {
     // Trigger shorts refresh when initialization is complete
-    if (shortsRef.current.fetchShorts) {
+    if (shortsRef.current) {
       shortsRef.current.fetchShorts();
     }
   };
