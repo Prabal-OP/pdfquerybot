@@ -98,11 +98,11 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
   }
 
   return (
-    <div className="w-full h-[65vh] mb-6">
-      <Carousel className="w-full h-full">
-        <CarouselContent>
+    <div className="w-full h-[65vh] mb-6 mt-16"> {/* Added mt-16 to avoid overlap with PDF button */}
+      <Carousel className="w-full h-full" opts={{ align: "start", slidesToScroll: 1 }}>
+        <CarouselContent className="flex">
           {shorts.map((short) => (
-            <CarouselItem key={short.id}>
+            <CarouselItem key={short.id} className="basis-1/3 pl-4"> {/* Set to show 3 items */}
               <Card className="h-full flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
