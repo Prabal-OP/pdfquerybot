@@ -98,7 +98,7 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
   }
 
   return (
-    <div className="w-full h-[65vh] mb-6">
+    <div className="w-full h-[400px]">
       <Carousel className="w-full h-full" opts={{ slidesToScroll: 1, align: "start", containScroll: "trimSnaps" }}>
         <CarouselContent className="h-full -ml-4">
           {shorts.map((short) => (
