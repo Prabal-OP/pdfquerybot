@@ -21,6 +21,7 @@ const Index = () => {
   };
 
   const handleShortsInitialized = () => {
+    // Trigger shorts refresh when initialization is complete
     if (shortsRef.current) {
       shortsRef.current.fetchShorts();
     }
@@ -74,7 +75,7 @@ const Index = () => {
             {showPdf ? 'Hide PDF' : 'Show PDF'}
           </Button>
           
-          <ResizablePanelGroup direction="horizontal" className="pt-16">
+          <ResizablePanelGroup direction="horizontal">
             {showPdf && (
               <>
                 <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
@@ -84,11 +85,11 @@ const Index = () => {
               </>
             )}
             <ResizablePanel defaultSize={showPdf ? 60 : 100}>
-              <div className="h-full flex flex-col p-4 gap-6">
-                <div className="flex-none">
+              <div className="h-full flex flex-col">
+                <div className="flex-grow-0">
                   <Shorts ref={shortsRef} />
                 </div>
-                <div className="flex-1 min-h-0">
+                <div className="flex-grow">
                   <Chat onPageChange={handlePageChange} />
                 </div>
               </div>
