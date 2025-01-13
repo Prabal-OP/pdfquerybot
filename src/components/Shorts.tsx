@@ -3,7 +3,7 @@ import { Check, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
 
@@ -29,6 +29,7 @@ export interface ShortsRef {
 const Shorts = forwardRef<ShortsRef>((_, ref) => {
   const [shorts, setShorts] = useState<Short[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
   const fetchShorts = async () => {
@@ -76,6 +77,18 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
     fetchShorts();
   }, []);
 
+  const handleMarkAsComplete = async (shortId: string) => {
+    const currentShortIndex = shorts.findIndex(s => s.id === shortId);
+    if (currentShortIndex > -1) {
+      const updatedShorts = shorts.filter((_, index) => index !== currentShortIndex);
+      setShorts(updatedShorts);
+      toast({
+        title: "Success",
+        description: "Short marked as complete!",
+      });
+    }
+  };
+
   if (loading) {
     return <div className="w-full text-center py-8">Loading shorts...</div>;
   }
@@ -85,11 +98,11 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
   }
 
   return (
-    <div className="w-full mb-6">
-      <Carousel className="w-full">
+    <div className="w-full h-[65vh] mb-6">
+      <Carousel className="w-full h-full">
         <CarouselContent>
           {shorts.map((short) => (
-            <CarouselItem key={short.id} className="md:basis-1/3">
+            <CarouselItem key={short.id}>
               <Card className="h-full flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
@@ -97,27 +110,50 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
                     <Grid3X3 className="h-5 w-5" />
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
+                <CardContent className="flex-1 flex flex-col overflow-hidden">
                   <p className="text-sm text-muted-foreground mb-4">{short.topic_summary}</p>
-                  <ScrollArea className="flex-1 w-full whitespace-nowrap">
-                    <div className="flex space-x-4 pb-2">
-                      {short.questions?.map((question, index) => (
-                        <div key={question.id} className="space-y-1 min-w-[300px]">
-                          <p className="text-sm font-medium">
-                            {index + 1}. {question.question_text}
-                          </p>
-                          {question.options?.map((option) => (
-                            <p key={option.id} className="text-sm pl-4 text-muted-foreground">
-                              • {option.option_text}
-                              {option.is_correct && <span className="text-green-500 ml-1">(✓)</span>}
-                            </p>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                    <ScrollBar orientation="horizontal" />
-                  </ScrollArea>
-                  <Button className="w-full mt-4">
+                  <div className="flex-1 overflow-hidden">
+                    <Carousel className="w-full h-full">
+                      <CarouselContent>
+                        {short.questions?.map((question, index) => (
+                          <CarouselItem key={question.id}>
+                            <div className="space-y-4">
+                              <h3 className="text-sm font-medium">
+                                Question {index + 1} of {short.questions.length}:
+                                <br />
+                                {question.question_text}
+                              </h3>
+                              <RadioGroup
+                                value={selectedAnswers[question.id]}
+                                onValueChange={(value) => 
+                                  setSelectedAnswers(prev => ({
+                                    ...prev,
+                                    [question.id]: value
+                                  }))
+                                }
+                                className="space-y-2"
+                              >
+                                {question.options?.map((option) => (
+                                  <div key={option.id} className="flex items-center space-x-2">
+                                    <RadioGroupItem value={option.id} id={option.id} />
+                                    <label htmlFor={option.id} className="text-sm">
+                                      {option.option_text}
+                                    </label>
+                                  </div>
+                                ))}
+                              </RadioGroup>
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <CarouselPrevious />
+                      <CarouselNext />
+                    </Carousel>
+                  </div>
+                  <Button 
+                    className="w-full mt-4"
+                    onClick={() => handleMarkAsComplete(short.id)}
+                  >
                     <Check className="mr-2 h-4 w-4" />
                     Mark as Complete
                   </Button>
