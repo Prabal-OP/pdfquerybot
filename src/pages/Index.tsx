@@ -85,9 +85,13 @@ const Index = () => {
               </>
             )}
             <ResizablePanel defaultSize={showPdf ? 60 : 100}>
-              <div className="h-full flex flex-col p-4">
-                <Shorts ref={shortsRef} />
-                <Chat onPageChange={handlePageChange} />
+              <div className="h-full flex flex-col">
+                <div className="flex-grow-0">
+                  <Shorts ref={shortsRef} />
+                </div>
+                <div className="flex-grow">
+                  <Chat onPageChange={handlePageChange} />
+                </div>
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>

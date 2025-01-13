@@ -90,19 +90,19 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
   };
 
   if (loading) {
-    return <div className="w-full text-center py-8">Loading shorts...</div>;
+    return <div className="w-full h-[65vh] text-center py-8">Loading shorts...</div>;
   }
 
   if (!shorts.length) {
-    return <div className="w-full text-center py-8">No shorts available yet. Upload a PDF to generate some!</div>;
+    return <div className="w-full h-[65vh] text-center py-8">No shorts available yet. Upload a PDF to generate some!</div>;
   }
 
   return (
-    <div className="w-full h-[65vh] mb-6 mt-16"> {/* Added mt-16 to avoid overlap with PDF button */}
+    <div className="w-full h-[65vh] mb-6 mt-16"> {/* Height set to 65vh */}
       <Carousel className="w-full h-full" opts={{ align: "start", slidesToScroll: 1 }}>
         <CarouselContent className="flex">
           {shorts.map((short) => (
-            <CarouselItem key={short.id} className="basis-1/3 pl-4"> {/* Set to show 3 items */}
+            <CarouselItem key={short.id} className="basis-1/3 pl-4">
               <Card className="h-full flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
@@ -112,43 +112,35 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col overflow-hidden">
                   <p className="text-sm text-muted-foreground mb-4">{short.topic_summary}</p>
-                  <div className="flex-1 overflow-hidden">
-                    <Carousel className="w-full h-full">
-                      <CarouselContent>
-                        {short.questions?.map((question, index) => (
-                          <CarouselItem key={question.id}>
-                            <div className="space-y-4">
-                              <h3 className="text-sm font-medium">
-                                Question {index + 1} of {short.questions.length}:
-                                <br />
-                                {question.question_text}
-                              </h3>
-                              <RadioGroup
-                                value={selectedAnswers[question.id]}
-                                onValueChange={(value) => 
-                                  setSelectedAnswers(prev => ({
-                                    ...prev,
-                                    [question.id]: value
-                                  }))
-                                }
-                                className="space-y-2"
-                              >
-                                {question.options?.map((option) => (
-                                  <div key={option.id} className="flex items-center space-x-2">
-                                    <RadioGroupItem value={option.id} id={option.id} />
-                                    <label htmlFor={option.id} className="text-sm">
-                                      {option.option_text}
-                                    </label>
-                                  </div>
-                                ))}
-                              </RadioGroup>
+                  <div className="flex-1 overflow-y-auto">
+                    {short.questions?.map((question, index) => (
+                      <div key={question.id} className="mb-6 last:mb-0">
+                        <h3 className="text-sm font-medium mb-3">
+                          Question {index + 1} of {short.questions.length}:
+                          <br />
+                          {question.question_text}
+                        </h3>
+                        <RadioGroup
+                          value={selectedAnswers[question.id]}
+                          onValueChange={(value) => 
+                            setSelectedAnswers(prev => ({
+                              ...prev,
+                              [question.id]: value
+                            }))
+                          }
+                          className="space-y-2"
+                        >
+                          {question.options?.map((option) => (
+                            <div key={option.id} className="flex items-center space-x-2">
+                              <RadioGroupItem value={option.id} id={option.id} />
+                              <label htmlFor={option.id} className="text-sm">
+                                {option.option_text}
+                              </label>
                             </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <CarouselPrevious />
-                      <CarouselNext />
-                    </Carousel>
+                          ))}
+                        </RadioGroup>
+                      </div>
+                    ))}
                   </div>
                   <Button 
                     className="w-full mt-4"
