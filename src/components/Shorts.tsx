@@ -99,10 +99,10 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
 
   return (
     <div className="w-full h-[65vh] mb-6">
-      <Carousel className="w-full h-full">
-        <CarouselContent>
+      <Carousel className="w-full h-full" opts={{ align: "start", slidesToScroll: 1, slidesToShow: 3 }}>
+        <CarouselContent className="-ml-4">
           {shorts.map((short) => (
-            <CarouselItem key={short.id}>
+            <CarouselItem key={short.id} className="pl-4 basis-1/3">
               <Card className="h-full flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
@@ -112,8 +112,8 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col overflow-hidden">
                   <p className="text-sm text-muted-foreground mb-4">{short.topic_summary}</p>
-                  <div className="flex-1 overflow-hidden">
-                    <Carousel className="w-full h-full">
+                  <div className="flex-1 overflow-y-auto">
+                    <Carousel className="w-full">
                       <CarouselContent>
                         {short.questions?.map((question, index) => (
                           <CarouselItem key={question.id}>
