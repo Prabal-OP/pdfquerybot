@@ -7,6 +7,8 @@ import PDFPreview from '@/components/PDFPreview';
 import Shorts, { ShortsRef } from '@/components/Shorts';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 
+// ... keep existing code (component setup)
+
 const Index = () => {
   const [hasFile, setHasFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -84,11 +86,11 @@ const Index = () => {
               </>
             )}
             <ResizablePanel defaultSize={showPdf ? 60 : 100}>
-              <div className="h-full flex flex-col p-4 space-y-4">
-                <div className="flex-none">
+              <div className="h-full flex flex-col p-4">
+                <div className="flex-none h-[60vh]">
                   <Shorts ref={shortsRef} />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 h-[40vh] mt-4">
                   <Chat onPageChange={handlePageChange} />
                 </div>
               </div>

@@ -90,15 +90,15 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
   };
 
   if (loading) {
-    return <div className="w-full text-center py-8">Loading shorts...</div>;
+    return <div className="w-full h-[60vh] text-center py-8">Loading shorts...</div>;
   }
 
   if (!shorts.length) {
-    return <div className="w-full text-center py-8">No shorts available yet. Upload a PDF to generate some!</div>;
+    return <div className="w-full h-[60vh] text-center py-8">No shorts available yet. Upload a PDF to generate some!</div>;
   }
 
   return (
-    <div className="w-full h-[40vh] mb-4">
+    <div className="w-full h-[60vh]">
       <Carousel className="w-full h-full" opts={{ 
         align: "start",
         slidesToScroll: 1,
