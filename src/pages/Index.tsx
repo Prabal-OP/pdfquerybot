@@ -7,8 +7,6 @@ import PDFPreview from '@/components/PDFPreview';
 import Shorts, { ShortsRef } from '@/components/Shorts';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
 
-// ... keep existing code (component setup)
-
 const Index = () => {
   const [hasFile, setHasFile] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -23,6 +21,7 @@ const Index = () => {
   };
 
   const handleShortsInitialized = () => {
+    // Trigger shorts refresh when initialization is complete
     if (shortsRef.current) {
       shortsRef.current.fetchShorts();
     }
@@ -65,7 +64,7 @@ const Index = () => {
           </div>
         </div>
       ) : (
-        <div className="h-screen relative">
+        <div className="h-screen">
           <Button
             variant="outline"
             size="sm"
@@ -76,7 +75,7 @@ const Index = () => {
             {showPdf ? 'Hide PDF' : 'Show PDF'}
           </Button>
           
-          <ResizablePanelGroup direction="horizontal" className="h-full pt-16">
+          <ResizablePanelGroup direction="horizontal">
             {showPdf && (
               <>
                 <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
@@ -87,12 +86,8 @@ const Index = () => {
             )}
             <ResizablePanel defaultSize={showPdf ? 60 : 100}>
               <div className="h-full flex flex-col p-4">
-                <div className="flex-none h-[60vh]">
-                  <Shorts ref={shortsRef} />
-                </div>
-                <div className="flex-1 h-[40vh] mt-4">
-                  <Chat onPageChange={handlePageChange} />
-                </div>
+                <Shorts ref={shortsRef} />
+                <Chat onPageChange={handlePageChange} />
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>

@@ -90,23 +90,19 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
   };
 
   if (loading) {
-    return <div className="w-full h-[60vh] text-center py-8">Loading shorts...</div>;
+    return <div className="w-full text-center py-8">Loading shorts...</div>;
   }
 
   if (!shorts.length) {
-    return <div className="w-full h-[60vh] text-center py-8">No shorts available yet. Upload a PDF to generate some!</div>;
+    return <div className="w-full text-center py-8">No shorts available yet. Upload a PDF to generate some!</div>;
   }
 
   return (
-    <div className="w-full h-[60vh]">
-      <Carousel className="w-full h-full" opts={{ 
-        align: "start",
-        slidesToScroll: 1,
-        containScroll: "trimSnaps"
-      }}>
-        <CarouselContent className="-ml-4">
+    <div className="w-full h-[65vh] mb-6">
+      <Carousel className="w-full h-full">
+        <CarouselContent>
           {shorts.map((short) => (
-            <CarouselItem key={short.id} className="pl-4 basis-1/2">
+            <CarouselItem key={short.id}>
               <Card className="h-full flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
@@ -116,8 +112,8 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col overflow-hidden">
                   <p className="text-sm text-muted-foreground mb-4">{short.topic_summary}</p>
-                  <div className="flex-1 overflow-y-auto">
-                    <Carousel className="w-full">
+                  <div className="flex-1 overflow-hidden">
+                    <Carousel className="w-full h-full">
                       <CarouselContent>
                         {short.questions?.map((question, index) => (
                           <CarouselItem key={question.id}>
