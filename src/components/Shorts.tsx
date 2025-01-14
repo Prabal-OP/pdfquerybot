@@ -98,7 +98,7 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
   }
 
   return (
-    <div className="w-full h-[65vh] mb-6">
+    <div className="w-full h-[40vh] mb-4">
       <Carousel className="w-full h-full" opts={{ 
         align: "start",
         slidesToScroll: 1,
@@ -106,7 +106,7 @@ const Shorts = forwardRef<ShortsRef>((_, ref) => {
       }}>
         <CarouselContent className="-ml-4">
           {shorts.map((short) => (
-            <CarouselItem key={short.id} className="pl-4 basis-1/3">
+            <CarouselItem key={short.id} className="pl-4 basis-1/2">
               <Card className="h-full flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
