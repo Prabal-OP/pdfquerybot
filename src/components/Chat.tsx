@@ -97,7 +97,7 @@ const Chat = ({ onPageChange }: ChatProps) => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full max-w-2xl mx-auto border rounded-lg bg-white shadow-sm">
+    <div className="flex flex-col h-full w-full border rounded-lg bg-white shadow-sm">
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((message, index) => (

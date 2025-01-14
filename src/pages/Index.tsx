@@ -74,7 +74,7 @@ const Index = () => {
             {showPdf ? 'Hide PDF' : 'Show PDF'}
           </Button>
           
-          <ResizablePanelGroup direction="horizontal" className="pt-16">
+          <ResizablePanelGroup direction="horizontal" className="h-full pt-16">
             {showPdf && (
               <>
                 <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
@@ -88,7 +88,7 @@ const Index = () => {
                 <div className="flex-none">
                   <Shorts ref={shortsRef} />
                 </div>
-                <div className="flex-1 min-h-0">
+                <div className="flex-1">
                   <Chat onPageChange={handlePageChange} />
                 </div>
               </div>
