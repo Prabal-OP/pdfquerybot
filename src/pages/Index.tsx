@@ -64,18 +64,6 @@ const Index = () => {
         </div>
       ) : (
         <div className="h-screen flex flex-col">
-          <div className="p-4 border-b bg-white">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={togglePdfVisibility}
-              className="ml-4"
-            >
-              {showPdf ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
-              {showPdf ? 'Hide PDF' : 'Show PDF'}
-            </Button>
-          </div>
-          
           <div className="flex-1 overflow-hidden">
             <ResizablePanelGroup direction="horizontal">
               {showPdf && (
@@ -87,11 +75,24 @@ const Index = () => {
                 </>
               )}
               <ResizablePanel defaultSize={showPdf ? 60 : 100}>
-                <div className="h-full flex flex-col p-4">
-                  <div className="h-[60%] mb-4">
-                    <Shorts ref={shortsRef} />
+                <div className="h-full flex flex-col">
+                  <div className="h-[60%] flex flex-col">
+                    <div className="p-4 border-b bg-white">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={togglePdfVisibility}
+                        className="ml-4"
+                      >
+                        {showPdf ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
+                        {showPdf ? 'Hide PDF' : 'Show PDF'}
+                      </Button>
+                    </div>
+                    <div className="flex-1 p-4">
+                      <Shorts ref={shortsRef} />
+                    </div>
                   </div>
-                  <div className="h-[40%]">
+                  <div className="h-[40%] p-4 border-t">
                     <Chat onPageChange={handlePageChange} />
                   </div>
                 </div>
