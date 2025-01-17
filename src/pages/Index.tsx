@@ -21,7 +21,6 @@ const Index = () => {
   };
 
   const handleShortsInitialized = () => {
-    // Trigger shorts refresh when initialization is complete
     if (shortsRef.current) {
       shortsRef.current.fetchShorts();
     }
@@ -64,33 +63,41 @@ const Index = () => {
           </div>
         </div>
       ) : (
-        <div className="h-screen">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={togglePdfVisibility}
-            className="fixed top-4 left-4 z-50"
-          >
-            {showPdf ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
-            {showPdf ? 'Hide PDF' : 'Show PDF'}
-          </Button>
+        <div className="h-screen flex flex-col">
+          <div className="p-4 border-b bg-white">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={togglePdfVisibility}
+              className="ml-4"
+            >
+              {showPdf ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
+              {showPdf ? 'Hide PDF' : 'Show PDF'}
+            </Button>
+          </div>
           
-          <ResizablePanelGroup direction="horizontal">
-            {showPdf && (
-              <>
-                <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
-                  {selectedFile && <PDFPreview file={selectedFile} onLoad={handlePDFLoad} />}
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-              </>
-            )}
-            <ResizablePanel defaultSize={showPdf ? 60 : 100}>
-              <div className="h-full flex flex-col p-4">
-                <Shorts ref={shortsRef} />
-                <Chat onPageChange={handlePageChange} />
-              </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+          <div className="flex-1 overflow-hidden">
+            <ResizablePanelGroup direction="horizontal">
+              {showPdf && (
+                <>
+                  <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
+                    {selectedFile && <PDFPreview file={selectedFile} onLoad={handlePDFLoad} />}
+                  </ResizablePanel>
+                  <ResizableHandle withHandle />
+                </>
+              )}
+              <ResizablePanel defaultSize={showPdf ? 60 : 100}>
+                <div className="h-full flex flex-col p-4">
+                  <div className="h-[60%] mb-4">
+                    <Shorts ref={shortsRef} />
+                  </div>
+                  <div className="h-[40%]">
+                    <Chat onPageChange={handlePageChange} />
+                  </div>
+                </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </div>
         </div>
       )}
     </div>
